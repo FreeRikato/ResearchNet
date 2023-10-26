@@ -7,17 +7,17 @@ from generate_embedding import get_vectorstore
 from conversation_chain import get_conversation_chain
 
 def handle_userinput(user_question):
-    response = st.session_state.conversation({'question': user_question})
-    st.session_state.chat_history = response['chat_history']
-
+    chat_history = st.session_state.get('chat_history', [])
+    response = st.session_state.conversation({"question": user_question, "chat_history": chat_history})
+    answer = response.get('answer')
+    chat_history.append((user_question, answer))
+    st.session_state['chat_history'] = chat_history
     for i, message in enumerate(st.session_state.chat_history):
-        if i % 2 == 0:
-            st.write(user_template.replace(
-                "{{MSG}}", message.content), unsafe_allow_html=True)
-        else:
-            st.write(bot_template.replace(
-                "{{MSG}}", message.content), unsafe_allow_html=True)
-
+        question, answer = message
+        st.write(user_template.replace(
+            "{{MSG}}", question), unsafe_allow_html=True)
+        st.write(bot_template.replace(
+            "{{MSG}}", answer), unsafe_allow_html=True)
 
 def main():
     load_dotenv()
@@ -28,7 +28,7 @@ def main():
     if "conversation" not in st.session_state:
         st.session_state.conversation = None
     if "chat_history" not in st.session_state:
-        st.session_state.chat_history = None
+        st.session_state.chat_history = []
 
     st.header("Chat with multiple PDFs :books:")
     user_question = st.text_input("Ask a question about your documents:")
