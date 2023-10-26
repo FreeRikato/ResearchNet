@@ -1,4 +1,5 @@
 import streamlit as st
+import os
 from dotenv import load_dotenv
 from htmlTemplates import css, bot_template, user_template
 from pdf_extractor import get_pdf_text
@@ -32,6 +33,10 @@ def main():
 
     st.header("Chat with multiple PDFs :books:")
     user_question = st.text_input("Ask a question about your documents:")
+    
+    knowledge_base_path = "./knowledge_base"
+    local_pdf_files = [os.path.join(knowledge_base_path, f) for f in os.listdir(knowledge_base_path) if f.endswith('.pdf')]
+    
     if user_question:
         handle_userinput(user_question)
 
@@ -43,6 +48,7 @@ def main():
             with st.spinner("Processing"):
                 # get pdf text
                 raw_text = get_pdf_text(pdf_docs)
+                raw_text = "".join(get_pdf_text(local_pdf_files))
 
                 # get the text chunks
                 text_chunks = get_text_chunks(raw_text)
