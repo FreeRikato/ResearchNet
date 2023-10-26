@@ -29,11 +29,10 @@ def handle_userinput(user_question):
         
     source = str(source_document[0]).split("page_content='", 1)[1].rstrip("'").replace('\\n', '\n').replace('\\t', '\t')
 
-    found_pdf_path, found_page_num = search_pdfs("./knowledge_base", source)
+    found_pdf_path, found_page_num = search_pdfs(".\knowledge_base", source)
     
     if found_pdf_path:
-        print(f'Text found in: {found_pdf_path} on page {found_page_num}')
-        print("----------------------------------------------")
+        st.sidebar.write(f'Text found in: {found_pdf_path}')
         # Convert the found page, its previous, and its next page to images
         images = pdf_pages_to_images(found_pdf_path, found_page_num)
         for (img, pg_num) in images:  # Unpack the tuple here
@@ -53,7 +52,7 @@ def handle_userinput(user_question):
 
 def main():
     load_dotenv()
-    st.set_page_config(page_title="Chat with multiple PDFs",
+    st.set_page_config(page_title="Research Resonance: A Knowledge-Based Query System",
                        page_icon=":books:")
     st.write(css, unsafe_allow_html=True)
 
@@ -62,11 +61,8 @@ def main():
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = []
 
-    st.header("Chat with multiple PDFs :books:")
-    user_question = st.text_input("Ask a question about your documents:")
-    
-    # knowledge_base_path = "./knowledge_base"
-    # local_pdf_files = [os.path.join(knowledge_base_path, f) for f in os.listdir(knowledge_base_path) if f.endswith('.pdf')]
+    st.header("Research Resonance: A Knowledge-Based Query System :books:")
+    user_question = st.text_input("Ask a question to your knowledge base:")
     
     if user_question:
         handle_userinput(user_question)
@@ -80,10 +76,9 @@ def main():
             with st.spinner("Processing"):
                 # get pdf text
                 
-                raw_text = get_pdf_text(pdf_docs)
+                save_uploaded_files(pdf_docs, "./knowledge_base")
                 
-                # save_uploaded_files(pdf_docs, knowledge_base_path)
-                # raw_text = "".join(get_pdf_text(local_pdf_files))
+                raw_text = "".join(get_pdf_text(local_pdf_files))
 
                 # get the text chunks
                 text_chunks = get_text_chunks(raw_text)
