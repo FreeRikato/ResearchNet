@@ -1,10 +1,6 @@
 import fitz 
 
 def pdf_pages_to_images(pdf_path, page_num):
-    """
-    Convert the specified page, its previous and next pages of the PDF to images using fitz.
-    Return a list of images.
-    """
     doc = fitz.open(pdf_path)
     images = []
 

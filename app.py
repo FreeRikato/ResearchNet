@@ -3,6 +3,7 @@ from io import BytesIO
 from dotenv import load_dotenv
 from PIL import Image
 import io
+import os
 
 from htmlTemplates import css, bot_template, user_template
 from pdf_extractor import get_pdf_text
@@ -63,6 +64,9 @@ def main():
 
     st.header("Research Resonance: A Knowledge-Based Query System :books:")
     user_question = st.text_input("Ask a question to your knowledge base:")
+    
+    knowledge_base_path = "./knowledge_base"
+    local_pdf_files = [os.path.join(knowledge_base_path, f) for f in os.listdir(knowledge_base_path) if f.endswith('.pdf')]
     
     if user_question:
         handle_userinput(user_question)
